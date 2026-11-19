@@ -106,8 +106,153 @@ public class ListaDuplamenteEncadeada {
 
 
 
+    public void imprimirInicio() {
+
+        No aux = inicio;
+
+        int posicao = 1;
+
+        while (aux != null) {
+
+            System.out.println("Posição: " + posicao);
+            System.out.println("ID: " + aux.getTarefa().getId());
+            System.out.println("Título: " + aux.getTarefa().getTitulo());
+            System.out.println("Descrição: " + aux.getTarefa().getDescricao());
+            System.out.println();
+
+            aux = aux.getProximo();
+            posicao++;
+        }
+    }
+
+
+    public void imprimirFim() {
+
+        No aux = fim;
+
+        int posicao = tamanhoLista();
+
+        while (aux != null) {
+
+            System.out.println("Posição: " + posicao);
+            System.out.println("ID: " + aux.getTarefa().getId());
+            System.out.println("Título: " + aux.getTarefa().getTitulo());
+            System.out.println("Descrição: " + aux.getTarefa().getDescricao());
+            System.out.println();
+
+            aux = aux.getAnterior();
+            posicao--;
+        }
+
+    }
+  
+    
+    public void removerPorId(int id) {
+
+        No aux = inicio;
+
+        while (aux != null && aux.getTarefa().getId() != id) {
+            aux = aux.getProximo();
+        }
+
+        if (aux == null) {
+            System.out.println("Tarefa não encontrada!");
+            return;
+        }
+
+        if (aux == inicio) {
+
+            inicio = aux.getProximo();
+
+            if (inicio != null) {
+                inicio.setAnterior(null);
+            } else {
+                fim = null;
+            }
+
+        } else if (aux == fim) {
+
+            fim = aux.getAnterior();
+
+            if (fim != null) {
+                fim.setProximo(null);
+            }
+
+        } else {
+
+            No anterior = aux.getAnterior();
+            No proximo = aux.getProximo();
+
+            anterior.setProximo(proximo);
+            proximo.setAnterior(anterior);
+        }
+
+        System.out.println("Tarefa removida com sucesso!");
+    }
+
+
+    
+    public void removerPorTitulo(String titulo) {
+        No aux = inicio;
+
+        while (aux != null && !aux.getTarefa().getTitulo().equals(titulo)) {
+            aux = aux.getProximo();
+        }
+
+        if (aux == null) {
+            System.out.println("Tarefa não encontrada!");
+            return;
+        }
+
+        if (aux == inicio) {
+            inicio = aux.getProximo();
+
+            if (inicio != null) {
+                inicio.setAnterior(null);
+            } else {
+                fim = null;
+            }
+
+        } else if (aux == fim) {
+            fim = aux.getAnterior();
+
+            if (fim != null) {
+                fim.setProximo(null);
+            }
+
+        } else {
+            No anterior = aux.getAnterior();
+            No proximo = aux.getProximo();
+
+            anterior.setProximo(proximo);
+            proximo.setAnterior(anterior);
+        }
+
+        System.out.println("Tarefa removida com sucesso!");
+    }
 
 
 
+
+
+   public static void main(String[] args) {
+
+    ListaDuplamenteEncadeada lista = new ListaDuplamenteEncadeada();
+
+    Tarefa tarefa1 = new Tarefa(0, "Estudar", "Para ser alguém na vida");
+    Tarefa tarefa2 = new Tarefa(1, "Tabalhar", "Ganhar dinheiro");
+    Tarefa tarefa3 = new Tarefa(2, "Flamengo", "Campeão brasileiro");
+
+    lista.inserirInicio(tarefa1);
+    lista.inserirInicio(tarefa2);
+    lista.inserirInicio(tarefa3);
+
+    lista.imprimirInicio();
+    System.out.println("===========================");
+    lista.imprimirFim();
 
 }
+
+}
+
+

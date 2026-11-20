@@ -3,11 +3,11 @@ public class Tarefa {
     int id;
     String titulo;
     String descricao;
+    private static int proximoId = 1;
 
-
-    public Tarefa(int id, String titulo, String descricao){
+    public Tarefa(String titulo, String descricao){
         
-        this.id = id;
+        this.id = proximoId++;
         this.titulo = titulo;
         this.descricao = descricao;
 

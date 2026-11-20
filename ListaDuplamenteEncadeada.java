@@ -259,31 +259,73 @@ public class ListaDuplamenteEncadeada {
     }
 
 
-   public static void main(String[] args) {
+    public static void main(String[] args) {
 
-    ListaDuplamenteEncadeada lista = new ListaDuplamenteEncadeada();
+        ListaDuplamenteEncadeada lista = new ListaDuplamenteEncadeada();
 
-    Tarefa tarefa1 = new Tarefa(0, "Estudar", "Para ser alguém na vida");
-    Tarefa tarefa2 = new Tarefa(1, "Tabalhar", "Ganhar dinheiro");
-    Tarefa tarefa3 = new Tarefa(2, "Flamengo", "Campeão brasileiro");
+        Tarefa tarefa1 = new Tarefa("Estudar", "Para ser alguém na vida");
+        Tarefa tarefa2 = new Tarefa("Tabalhar", "Ganhar dinheiro");
+        Tarefa tarefa3 = new Tarefa("Flamengo", "Campeão brasileiro");
 
-    lista.inserirInicio(tarefa1);
-    lista.inserirInicio(tarefa2);
-    lista.inserirInicio(tarefa3);
+        lista.inserirInicio(tarefa1);
+        lista.inserirInicio(tarefa2);
+        lista.inserirInicio(tarefa3);
 
-    lista.imprimirInicio();
-    System.out.println("===========================");
-    lista.imprimirFim();
+        lista.imprimirInicio();
+        System.out.println("===========================");
+        lista.imprimirFim();
+
+
+        System.out.println("===========================");
+        lista.moverTarefa(2, 1);
+        System.out.println("Após movimentação:");
+        System.out.println();
+        lista.imprimirInicio();
 
 
 
-    lista.moverTarefa(2, 1);
 
-    System.out.println("Após movimentação:");
-    System.out.println();
-    lista.imprimirInicio();
-}
 
+        System.out.println("==========================================");
+        
+
+        lista.inserirFinal(new Tarefa("Teste", "Remoção única"));
+
+        lista.removerPorId(4);
+
+        System.out.println("Tamanho: " + lista.tamanhoLista());
+        
+
+
+
+
+
+        System.out.println("===================================");
+        
+
+        lista.inserirFinal(new Tarefa("Tarefa A", "Primeira"));
+        lista.inserirFinal(new Tarefa("Tarefa B", "Segunda"));
+        lista.inserirFinal(new Tarefa("Tarefa C", "Terceira"));
+        lista.inserirFinal(new Tarefa("Tarefa D", "Quarta"));
+
+        System.out.println("LISTA ORIGINAL:");
+        lista.imprimirInicio();
+
+        System.out.println("REMOVENDO PRIMEIRA:");
+        lista.removerPorId(5);
+        lista.imprimirInicio();
+
+        System.out.println("REMOVENDO ÚLTIMA:");
+        lista.removerPorId(8);
+        lista.imprimirInicio();
+
+        System.out.println("REMOVENDO DO MEIO:");
+        lista.removerPorId(6);
+        lista.imprimirInicio();
+
+        System.out.println("Tamanho final: " + lista.tamanhoLista());
+
+    }
 }
 
 

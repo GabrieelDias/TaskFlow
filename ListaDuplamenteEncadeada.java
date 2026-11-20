@@ -1,5 +1,3 @@
-package TaskFlow;
-
 public class ListaDuplamenteEncadeada {
     
     No inicio;
@@ -235,6 +233,32 @@ public class ListaDuplamenteEncadeada {
 
 
 
+    public void moverTarefa(int id, int novaPosicao){
+        int tamanho = tamanhoLista();
+
+        if (novaPosicao < 1 || novaPosicao > tamanho) {
+            System.out.println("Posição inválida!");
+            return;
+        }
+
+        No aux = inicio;
+
+        while (aux != null && aux.getTarefa().getId() != id) {
+            aux = aux.getProximo();
+        }
+
+        if (aux == null) {
+            System.out.println("Tarefa não encontrada!");
+            return;
+        }
+
+        Tarefa tarefaMovida = aux.getTarefa();
+
+        removerPorId(id);
+        inserirEspec(tarefaMovida, novaPosicao);
+    }
+
+
    public static void main(String[] args) {
 
     ListaDuplamenteEncadeada lista = new ListaDuplamenteEncadeada();
@@ -251,6 +275,13 @@ public class ListaDuplamenteEncadeada {
     System.out.println("===========================");
     lista.imprimirFim();
 
+
+
+    lista.moverTarefa(2, 1);
+
+    System.out.println("Após movimentação:");
+    System.out.println();
+    lista.imprimirInicio();
 }
 
 }

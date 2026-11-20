@@ -1,9 +1,6 @@
-package TaskFlow;
-
 public class No {
     
     private Tarefa tarefa;
-    private int capacidade;
     private No anterior;
     private No proximo;
 
@@ -21,15 +18,6 @@ public class No {
 
     public void setTarefa(Tarefa tarefa) {
         this.tarefa = tarefa;
-    }
-
-    public int getCapacidade() {
-        return capacidade;
-    }
-
-
-    public void setCapacidade(int capacidade) {
-        this.capacidade = capacidade;
     }
 
     public No getAnterior(){

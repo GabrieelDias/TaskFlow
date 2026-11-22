@@ -12,7 +12,7 @@ public class FilaTriagem {
         this.tamanho = 0;
     }
 
-    // Adiciona uma demanda ao final da fila.
+   
     public void enfileirar(Demanda demanda) {
 
         NoFila novo = new NoFila(demanda);
@@ -30,7 +30,7 @@ public class FilaTriagem {
         System.out.println("Demanda adicionada à fila!");
     }
 
-    // Remove e retorna a primeira demanda da fila.
+   
     public Demanda desenfileirar() {
 
         if (estaVazia()) {
@@ -51,7 +51,7 @@ public class FilaTriagem {
         return demandaAtendida;
     }
 
-    // Consulta a primeira demanda sem removê-la.
+  
     public Demanda consultarProxima() {
 
         if (estaVazia()) {
@@ -61,7 +61,7 @@ public class FilaTriagem {
         return inicio.getDemanda();
     }
 
-    // Exibe todas as demandas pendentes.
+    
     public void exibirFila() {
 
         if (estaVazia()) {

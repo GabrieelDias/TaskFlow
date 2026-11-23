@@ -1,151 +1,140 @@
-public class ListaDuplamenteEncadeada {
-    
-    No inicio;
-    No fim;
+package TaskFlow;
 
+public class ListaDuplamenteEncadeada {
+
+    private No inicio;
+    private No fim;
+    private PilhaDesfazer historico;
+
+    public ListaDuplamenteEncadeada(PilhaDesfazer historico) {
+        this.inicio = null;
+        this.fim = null;
+        this.historico = historico;
+    }
 
     public int tamanhoLista() {
+
         No aux = inicio;
         int contador = 0;
 
         while (aux != null) {
             aux = aux.getProximo();
-            contador ++;
+            contador++;
         }
+
         return contador;
     }
 
-    public void inserirFinal(Tarefa tarefa){
+    // =========================
+    // INSERÇÕES
+    // =========================
 
-       No novo = new No(tarefa);
-
-        if (inicio == null) {
-            inicio = novo;
-            fim = novo;
-        }else{
-            fim.setProximo(novo);
-            novo.setAnterior(fim);
-
-            fim = novo;
-            
-        }
-
+    public void inserirFinal(Tarefa tarefa) {
+        inserirEspec(tarefa, tamanhoLista() + 1);
     }
 
+    public void inserirInicio(Tarefa tarefa) {
+        inserirEspec(tarefa, 1);
+    }
 
-    public void inserirInicio(Tarefa tarefa){
+    public void inserirEspec(Tarefa tarefa, int posicao) {
+
+        if (posicao < 1 || posicao > tamanhoLista() + 1) {
+            System.out.println("Posição inválida!");
+            return;
+        }
+
+        inserirInterno(tarefa, posicao);
+
+        // Registra a operação inversa.
+        historico.empilhar(() -> removerInterno(tarefa.getId()));
+
+        System.out.println("Tarefa inserida com sucesso!");
+    }
+
+    private void inserirInterno(Tarefa tarefa, int posicao) {
 
         No novo = new No(tarefa);
 
-
         if (inicio == null) {
             inicio = novo;
             fim = novo;
-        }else{
+            return;
+        }
+
+        if (posicao == 1) {
 
             novo.setProximo(inicio);
             inicio.setAnterior(novo);
-
             inicio = novo;
-        }
 
-    }
-
-
-    public void inserirEspec(Tarefa tarefa, int posicao){
-
-
-        if (posicao < 1) {
-             System.out.println("Posição inválida!");
             return;
         }
 
-        int capacidade = tamanhoLista();
+        if (posicao == tamanhoLista() + 1) {
 
-        if (posicao > capacidade + 1) {
-            System.out.println("Posição inválida!");
-            return;
-        }
-        
-        if (posicao == 1) {
-            inserirInicio(tarefa);
+            fim.setProximo(novo);
+            novo.setAnterior(fim);
+            fim = novo;
+
             return;
         }
 
-        
-        if (posicao == capacidade + 1) {
-            inserirFinal(tarefa);
-            return;
-        }
-                
         No aux = inicio;
-        int posiAtual = 1;
-        No novo = new No(tarefa);
-        
 
-        while (posiAtual != posicao && aux != null) {
+        for (int i = 1; i < posicao; i++) {
             aux = aux.getProximo();
-            posiAtual ++;
-        }
-
-
-        if (aux == null) {
-            System.out.println("Posição inválida!");
-            return;
         }
 
         No anterior = aux.getAnterior();
+
         anterior.setProximo(novo);
         novo.setAnterior(anterior);
+
         novo.setProximo(aux);
         aux.setAnterior(novo);
     }
 
+    // =========================
+    // REMOÇÕES
+    // =========================
 
+    public void removerPorId(int id) {
 
+        int posicao = buscarPosicao(id);
 
-    public void imprimirInicio() {
+        if (posicao == -1) {
+            System.out.println("Tarefa não encontrada!");
+            return;
+        }
+
+        Tarefa removida = removerInterno(id);
+
+        // Registra a operação inversa.
+        historico.empilhar(() -> inserirInterno(removida, posicao));
+
+        System.out.println("Tarefa removida com sucesso!");
+    }
+
+    public void removerPorTitulo(String titulo) {
 
         No aux = inicio;
 
-        int posicao = 1;
-
-        while (aux != null) {
-
-            System.out.println("Posição: " + posicao);
-            System.out.println("ID: " + aux.getTarefa().getId());
-            System.out.println("Título: " + aux.getTarefa().getTitulo());
-            System.out.println("Descrição: " + aux.getTarefa().getDescricao());
-            System.out.println();
+        while (aux != null &&
+               !aux.getTarefa().getTitulo().equalsIgnoreCase(titulo)) {
 
             aux = aux.getProximo();
-            posicao++;
-        }
-    }
-
-
-    public void imprimirFim() {
-
-        No aux = fim;
-
-        int posicao = tamanhoLista();
-
-        while (aux != null) {
-
-            System.out.println("Posição: " + posicao);
-            System.out.println("ID: " + aux.getTarefa().getId());
-            System.out.println("Título: " + aux.getTarefa().getTitulo());
-            System.out.println("Descrição: " + aux.getTarefa().getDescricao());
-            System.out.println();
-
-            aux = aux.getAnterior();
-            posicao--;
         }
 
+        if (aux == null) {
+            System.out.println("Tarefa não encontrada!");
+            return;
+        }
+
+        removerPorId(aux.getTarefa().getId());
     }
-  
-    
-    public void removerPorId(int id) {
+
+    private Tarefa removerInterno(int id) {
 
         No aux = inicio;
 
@@ -154,9 +143,10 @@ public class ListaDuplamenteEncadeada {
         }
 
         if (aux == null) {
-            System.out.println("Tarefa não encontrada!");
-            return;
+            return null;
         }
+
+        Tarefa removida = aux.getTarefa();
 
         if (aux == inicio) {
 
@@ -171,10 +161,7 @@ public class ListaDuplamenteEncadeada {
         } else if (aux == fim) {
 
             fim = aux.getAnterior();
-
-            if (fim != null) {
-                fim.setProximo(null);
-            }
+            fim.setProximo(null);
 
         } else {
 
@@ -185,55 +172,15 @@ public class ListaDuplamenteEncadeada {
             proximo.setAnterior(anterior);
         }
 
-        System.out.println("Tarefa removida com sucesso!");
+        return removida;
     }
 
+   // =========================
+    // MOVIMENTAÇÃO
+    // =========================
 
-    
-    public void removerPorTitulo(String titulo) {
-        No aux = inicio;
+    public void moverTarefa(int id, int novaPosicao) {
 
-        while (aux != null && !aux.getTarefa().getTitulo().equals(titulo)) {
-            aux = aux.getProximo();
-        }
-
-        if (aux == null) {
-            System.out.println("Tarefa não encontrada!");
-            return;
-        }
-
-        if (aux == inicio) {
-            inicio = aux.getProximo();
-
-            if (inicio != null) {
-                inicio.setAnterior(null);
-            } else {
-                fim = null;
-            }
-
-        } else if (aux == fim) {
-            fim = aux.getAnterior();
-
-            if (fim != null) {
-                fim.setProximo(null);
-            }
-
-        } else {
-            No anterior = aux.getAnterior();
-            No proximo = aux.getProximo();
-
-            anterior.setProximo(proximo);
-            proximo.setAnterior(anterior);
-        }
-
-        System.out.println("Tarefa removida com sucesso!");
-    }
-
-
-
-
-
-    public void moverTarefa(int id, int novaPosicao){
         int tamanho = tamanhoLista();
 
         if (novaPosicao < 1 || novaPosicao > tamanho) {
@@ -241,91 +188,102 @@ public class ListaDuplamenteEncadeada {
             return;
         }
 
-        No aux = inicio;
+        int posicaoAntiga = buscarPosicao(id);
 
-        while (aux != null && aux.getTarefa().getId() != id) {
-            aux = aux.getProximo();
-        }
-
-        if (aux == null) {
+        if (posicaoAntiga == -1) {
             System.out.println("Tarefa não encontrada!");
             return;
         }
 
-        Tarefa tarefaMovida = aux.getTarefa();
+        if (posicaoAntiga == novaPosicao) {
+            System.out.println("A tarefa já está nessa posição!");
+            return;
+        }
 
-        removerPorId(id);
-        inserirEspec(tarefaMovida, novaPosicao);
+        moverInterno(id, novaPosicao);
+
+        // Registra a posição anterior para o Undo.
+        historico.empilhar(() -> moverInterno(id, posicaoAntiga));
+
+        System.out.println("Tarefa movimentada com sucesso!");
     }
 
+    private void moverInterno(int id, int novaPosicao) {
 
-    public static void main(String[] args) {
+        Tarefa tarefa = removerInterno(id);
 
-        ListaDuplamenteEncadeada lista = new ListaDuplamenteEncadeada();
+        inserirInterno(tarefa, novaPosicao);
+    }
 
-        Tarefa tarefa1 = new Tarefa("Estudar", "Para ser alguém na vida");
-        Tarefa tarefa2 = new Tarefa("Tabalhar", "Ganhar dinheiro");
-        Tarefa tarefa3 = new Tarefa("Flamengo", "Campeão brasileiro");
+    private int buscarPosicao(int id) {
 
-        lista.inserirInicio(tarefa1);
-        lista.inserirInicio(tarefa2);
-        lista.inserirInicio(tarefa3);
+        No aux = inicio;
+        int posicao = 1;
 
-        lista.imprimirInicio();
-        System.out.println("===========================");
-        lista.imprimirFim();
+        while (aux != null) {
 
+            if (aux.getTarefa().getId() == id) {
+                return posicao;
+            }
 
-        System.out.println("===========================");
-        lista.moverTarefa(2, 1);
-        System.out.println("Após movimentação:");
-        System.out.println();
-        lista.imprimirInicio();
+            aux = aux.getProximo();
+            posicao++;
+        }
 
+        return -1;
+    }
 
+    // =========================
+    // IMPRESSÃO
+    // =========================
 
+    public void imprimirInicio() {
 
+        if (inicio == null) {
+            System.out.println("O projeto não possui tarefas.");
+            return;
+        }
 
-        System.out.println("==========================================");
-        
+        No aux = inicio;
+        int posicao = 1;
 
-        lista.inserirFinal(new Tarefa("Teste", "Remoção única"));
+        System.out.println("\n===== TAREFAS DO PROJETO =====");
 
-        lista.removerPorId(4);
+        while (aux != null) {
 
-        System.out.println("Tamanho: " + lista.tamanhoLista());
-        
+            System.out.println("Posição: " + posicao);
+            System.out.println("ID: " + aux.getTarefa().getId());
+            System.out.println("Título: " + aux.getTarefa().getTitulo());
+            System.out.println("Descrição: " + aux.getTarefa().getDescricao());
+            System.out.println("--------------------------");
 
+            aux = aux.getProximo();
+            posicao++;
+        }
+    }
 
+    public void imprimirFim() {
 
+        if (fim == null) {
+            System.out.println("O projeto não possui tarefas.");
+            return;
+        }
 
+        No aux = fim;
+        int posicao = tamanhoLista();
 
-        System.out.println("===================================");
-        
+        System.out.println("\n===== TAREFAS EM ORDEM INVERSA =====");
 
-        lista.inserirFinal(new Tarefa("Tarefa A", "Primeira"));
-        lista.inserirFinal(new Tarefa("Tarefa B", "Segunda"));
-        lista.inserirFinal(new Tarefa("Tarefa C", "Terceira"));
-        lista.inserirFinal(new Tarefa("Tarefa D", "Quarta"));
+        while (aux != null) {
 
-        System.out.println("LISTA ORIGINAL:");
-        lista.imprimirInicio();
+            System.out.println("Posição: " + posicao);
+            System.out.println("ID: " + aux.getTarefa().getId());
+            System.out.println("Título: " + aux.getTarefa().getTitulo());
+            System.out.println("Descrição: " + aux.getTarefa().getDescricao());
+            System.out.println("--------------------------");
 
-        System.out.println("REMOVENDO PRIMEIRA:");
-        lista.removerPorId(5);
-        lista.imprimirInicio();
-
-        System.out.println("REMOVENDO ÚLTIMA:");
-        lista.removerPorId(8);
-        lista.imprimirInicio();
-
-        System.out.println("REMOVENDO DO MEIO:");
-        lista.removerPorId(6);
-        lista.imprimirInicio();
-
-        System.out.println("Tamanho final: " + lista.tamanhoLista());
-
+            aux = aux.getAnterior();
+            posicao--;
+        }
     }
 }
-
-
